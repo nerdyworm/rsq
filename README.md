@@ -8,15 +8,25 @@ for a basic in memory queue and amazon's simple queue service.
 ## Usage
 
 ``` go
-router := rsq.NewJobRouter()
-router.Handle("testing", func(job *Job) error {
-  fmt.Printf("hello %s", job.Payload)
-  return nil
-})
+package main
 
-queue := NewMemoryAdapter()
-defer queue.Shutdown()
+import (
+	"fmt"
 
-queue.Push("testing", []byte("testing"))
-queue.Work(router)
+	"github.com/nerdyworm/rsq"
+)
+
+func main() {
+	router := rsq.NewJobRouter()
+	router.Handle("testing", func(job *rsq.Job) error {
+		fmt.Printf("hello %s\n", job.Payload)
+		return nil
+	})
+
+	queue := rsq.NewMemoryAdapter()
+	defer queue.Shutdown()
+
+	queue.Push("testing", []byte("world"))
+	queue.Work(router)
+}
 ```
