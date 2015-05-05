@@ -19,9 +19,9 @@ func (q *MemoryAdapter) Push(name string, payload []byte) error {
 }
 
 // Work off all the jobs in the queue
-func (q *MemoryAdapter) Work(router *JobRouter) {
+func (q *MemoryAdapter) Work(handler JobHandler) {
 	for i, job := range q.jobs {
-		err := router.Run(&job)
+		err := handler.Run(&job)
 		if err != nil {
 			log.Printf("error running job %v\n", err)
 		}
@@ -38,4 +38,4 @@ func (q *MemoryAdapter) Shutdown() error {
 	return nil
 }
 
-var _ QueueAdapter = NewMemoryAdapter()
+var _ Queue = NewMemoryAdapter()

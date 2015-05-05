@@ -50,6 +50,13 @@ type Job struct {
 // can be removed from the Queue
 type JobHandlerFunc func(job *Job) error
 
+// JobHandler handler jobs
+type JobHandler interface {
+	Run(*Job) error
+}
+
+var _ JobHandler = &JobRouter{}
+
 // Handle adds a new JobHandlerFunc to the router
 func (r *JobRouter) Handle(name string, fn JobHandlerFunc) {
 	route := &JobRoute{name, fn}

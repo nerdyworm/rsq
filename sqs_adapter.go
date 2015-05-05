@@ -74,7 +74,7 @@ func (s *SqsAdapter) newMessage(job Job) (*sqs.SendMessageInput, error) {
 	return message, nil
 }
 
-func (s *SqsAdapter) Work(router *JobRouter) {
+func (s *SqsAdapter) Work(handler JobHandler) {
 	s.waitGroup.Add(1)
 	defer s.waitGroup.Done()
 
@@ -98,7 +98,7 @@ func (s *SqsAdapter) Work(router *JobRouter) {
 			errs := make(chan error, count)
 
 			for _, message := range messages.Messages {
-				go s.handleMessage(router, message, errs)
+				go s.handleMessage(handler, message, errs)
 			}
 
 			for i := 0; i < count; i++ {
@@ -121,7 +121,7 @@ func (s *SqsAdapter) receiveMessages() (*sqs.ReceiveMessageOutput, error) {
 	return s.service.ReceiveMessage(input)
 }
 
-func (s *SqsAdapter) handleMessage(router *JobRouter, message *sqs.Message, status chan error) {
+func (s *SqsAdapter) handleMessage(handler JobHandler, message *sqs.Message, status chan error) {
 	job := Job{}
 
 	err := json.Unmarshal([]byte(*message.Body), &job)
@@ -129,7 +129,7 @@ func (s *SqsAdapter) handleMessage(router *JobRouter, message *sqs.Message, stat
 		status <- err
 	}
 
-	err = router.Run(&job)
+	err = handler.Run(&job)
 	if err == nil {
 		err = s.deleteMessage(message)
 	}
@@ -155,4 +155,4 @@ func (s *SqsAdapter) Shutdown() error {
 	return nil
 }
 
-var _ QueueAdapter = &SqsAdapter{}
+var _ Queue = &SqsAdapter{}
