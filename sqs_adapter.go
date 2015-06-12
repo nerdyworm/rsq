@@ -99,10 +99,7 @@ func (s *SqsAdapter) Work(handler JobHandler) {
 			}
 
 			for i := 0; i < count; i++ {
-				e := <-errs
-				if e != nil {
-					fmt.Println(e)
-				}
+				<-errs
 			}
 		}
 	}
