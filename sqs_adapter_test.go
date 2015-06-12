@@ -1,15 +1,10 @@
 package rsq
 
 import (
-	"log"
 	"os"
 	"testing"
 	"time"
 )
-
-func init() {
-	log.SetFlags(log.LstdFlags | log.Lshortfile)
-}
 
 func TestSqsQueueAdapter(t *testing.T) {
 	ran := false

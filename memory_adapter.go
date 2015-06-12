@@ -1,6 +1,6 @@
 package rsq
 
-import "log"
+import "fmt"
 
 // NewMemoryAdapter returns an instance of a MemoryAdapter
 func NewMemoryAdapter() *MemoryAdapter {
@@ -23,7 +23,7 @@ func (q *MemoryAdapter) Work(handler JobHandler) {
 	for i, job := range q.jobs {
 		err := handler.Run(&job)
 		if err != nil {
-			log.Printf("error running job %v\n", err)
+			fmt.Printf("error running job %v\n", err)
 		}
 
 		if err == nil {

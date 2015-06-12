@@ -2,7 +2,7 @@ package rsq
 
 import (
 	"encoding/json"
-	"log"
+	"fmt"
 	"sync"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -79,18 +79,15 @@ func (s *SqsAdapter) Work(handler JobHandler) {
 	defer s.waitGroup.Done()
 
 	s.workerCount += 1
-	worker := s.workerCount
-	log.Printf("starting worker %d\n", worker)
 
 	for {
 		select {
 		case <-s.ch:
-			log.Printf("stoping worker %d\n", worker)
 			return
 		default:
 			messages, err := s.receiveMessages()
 			if err != nil {
-				log.Println(err)
+				fmt.Println(err)
 				break
 			}
 
@@ -104,7 +101,7 @@ func (s *SqsAdapter) Work(handler JobHandler) {
 			for i := 0; i < count; i++ {
 				e := <-errs
 				if e != nil {
-					log.Println(e)
+					fmt.Println(e)
 				}
 			}
 		}
@@ -148,10 +145,8 @@ func (s *SqsAdapter) deleteMessage(message *sqs.Message) error {
 }
 
 func (s *SqsAdapter) Shutdown() error {
-	log.Println("waiting for jobs to complete")
 	close(s.ch)
 	s.waitGroup.Wait()
-	log.Println("shutdown succesful")
 	return nil
 }
 

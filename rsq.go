@@ -1,10 +1,6 @@
 package rsq
 
-import (
-	"errors"
-	"log"
-	"time"
-)
+import "errors"
 
 var (
 	// ErrNoHandlerFound is returned from the default NotFoundHandler
@@ -65,18 +61,13 @@ func (r *JobRouter) Handle(name string, fn JobHandlerFunc) {
 
 // Run a job
 func (r *JobRouter) Run(job *Job) error {
-	start := time.Now()
-	log.Printf("Got job %v with payload %s\n", job.Name, job.Payload)
 	if handler, ok := r.namedJobs[job.Name]; ok {
-		err := handler.fn(job)
-		log.Printf("Finished job %v in %v\n", job.Name, time.Since(start))
-		return err
+		return handler.fn(job)
 	}
 
 	return r.NotFoundHandler(job)
 }
 
 func defaultNotFound(job *Job) error {
-	log.Printf("no handler found for %v\n", job.Name)
 	return ErrNoHandlerFound
 }
