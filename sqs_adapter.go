@@ -41,8 +41,8 @@ func NewSqsAdapter(config SqsOptions) *SqsAdapter {
 		service:           sqs.New(config.AwsConfig),
 		waitGroup:         &sync.WaitGroup{},
 		queueURL:          aws.String(config.QueueURL),
-		messagesPerWorker: aws.Long(config.MessagesPerWorker),
-		longPollTimeout:   aws.Long(config.LongPollTimeout),
+		messagesPerWorker: &config.MessagesPerWorker,
+		longPollTimeout:   &config.LongPollTimeout,
 	}
 }
 
