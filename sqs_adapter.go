@@ -67,7 +67,7 @@ func (s *SqsAdapter) newMessage(job Job) (*sqs.SendMessageInput, error) {
 	}
 
 	message := &sqs.SendMessageInput{
-		QueueURL:    s.queueURL,
+		QueueUrl:    s.queueURL,
 		MessageBody: aws.String(string(payload)),
 	}
 
@@ -107,7 +107,7 @@ func (s *SqsAdapter) Work(handler JobHandler) {
 
 func (s *SqsAdapter) receiveMessages() (*sqs.ReceiveMessageOutput, error) {
 	input := &sqs.ReceiveMessageInput{
-		QueueURL:            s.queueURL,
+		QueueUrl:            s.queueURL,
 		MaxNumberOfMessages: s.messagesPerWorker,
 		WaitTimeSeconds:     s.longPollTimeout,
 	}
@@ -133,7 +133,7 @@ func (s *SqsAdapter) handleMessage(handler JobHandler, message *sqs.Message, sta
 
 func (s *SqsAdapter) deleteMessage(message *sqs.Message) error {
 	input := &sqs.DeleteMessageInput{
-		QueueURL:      s.queueURL,
+		QueueUrl:      s.queueURL,
 		ReceiptHandle: message.ReceiptHandle,
 	}
 
